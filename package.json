@@ -1,0 +1,19 @@
+{
+  "name": "face-detection-totem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lexizz7/face-detection-totem.git"
+  },
+  "author": "Edmar Melandes (Lexizz7)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lexizz7/face-detection-totem/issues"
+  },
+  "homepage": "https://github.com/Lexizz7/face-detection-totem#readme"
+}
