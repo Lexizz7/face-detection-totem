@@ -8,7 +8,8 @@ function startVideo() {
   navigator.getUserMedia(
     { video: {} },
     (stream) => {
-      loading.style.display = "flex";
+      loading.innerHTML =
+        "<p>Carregando o modelo de reconhecimento facial...</p>";
       video.srcObject = stream;
     },
     (err) => console.error(err),
