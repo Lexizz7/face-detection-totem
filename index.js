@@ -1,22 +1,37 @@
 const video = document.getElementById("video");
 const videoWrapper = document.getElementById("video-wrapper");
-const loading = document.getElementById("loading");
+const alert = document.getElementById("alert");
 let canvas = null;
 let displaySize = null;
+
+function positionAlert() {
+  alert.style.top = `${video.offsetTop + video.clientHeight / 2}px`;
+  alert.style.left = `${video.offsetLeft + video.clientWidth / 2}px`;
+  alert.style.maxWidth = `${video.clientWidth}px`;
+  alert.style.maxHeight = `${video.clientHeight}px`;
+}
+
+function resizeVideo() {
+  const bounding = videoWrapper.getBoundingClientRect();
+  video.style.width = `${bounding.width}px`;
+  video.style.height = `${bounding.height}px`;
+  video.style.top = `${bounding.y}px`;
+  video.style.left = `${bounding.x}px`;
+  positionAlert();
+}
 
 function startVideo() {
   navigator.getUserMedia(
     { video: {} },
     (stream) => {
-      loading.innerHTML =
-        "<p>Carregando o modelo de reconhecimento facial...</p>";
+      alert.innerText = "Carregando o modelo de reconhecimento facial...";
       video.srcObject = stream;
     },
     (err) => console.error(err),
   );
 }
 
-function resize() {
+function resizeCanvas() {
   const ratio = Math.min(
     video.clientWidth / video.videoWidth,
     video.clientHeight / video.videoHeight,
@@ -25,13 +40,17 @@ function resize() {
     width: video.videoWidth * ratio,
     height: video.videoHeight * ratio,
   };
+  canvas.style.top = `${video.offsetTop}px`;
+  canvas.style.left = `${video.offsetLeft}px`;
   faceapi.matchDimensions(canvas, displaySize);
 }
 
 function init() {
+  video.style.opacity = 1;
   canvas = faceapi.createCanvasFromMedia(video);
-  videoWrapper.append(canvas);
-  resize();
+  document.body.append(canvas);
+
+  resizeCanvas();
 
   setInterval(async () => {
     const detections = await faceapi
@@ -50,7 +69,7 @@ function init() {
       }
     }
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-    loading.style.display !== "none" && (loading.style.display = "none");
+    alert.style.opacity !== 0 && (alert.style.opacity = 0);
     faceapi.draw.drawDetections(canvas, resizedDetections);
     faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
     faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
@@ -65,4 +84,9 @@ Promise.all([
 ]).then(startVideo);
 
 video.addEventListener("play", init);
-window.addEventListener("resize", resize);
+window.addEventListener("resize", () => {
+  resizeVideo();
+  resizeCanvas();
+});
+
+resizeVideo();
